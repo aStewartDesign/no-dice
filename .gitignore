@@ -1,0 +1,18 @@
+# package directories
+node_modules
+
+# OSX BS
+.DS_Store
+**/.DS_Store
+
+api/.serverless
+render/.serverless
+.vscode
+
+# build files
+api/.webpack
+client/public/*.html
+client/public/*.css
+client/public/*.js
+client/.webpack
+render/.webpack
