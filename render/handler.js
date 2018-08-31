@@ -13,7 +13,7 @@ import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
 
 import routes from '../client/js/routes.js';
-import {createStore} from '../client/js/reducers.js';
+import {createStore, reducers} from '../client/js/reducers.js';
 import index from '../client/index.hbs';
 
 class StaticReduxRouter extends React.Component {
@@ -55,15 +55,14 @@ export const render = (event, context, callback) => {
         }
     };
     const ct = hb.compile(index);
-    const params = event.queryStringParameters || {};
     const state = {
         app: {
-            name: params.name || 'World',
-            adj: params.adj || 'beautiful'
+            areOptionsOpen: false
         },
-        blog: {
-            posts: [],
-            isLoading: false
+        dice: {
+            activeDice: [1, 2, 3, 4, 5, 6],
+            lockedDice: [],
+            totalValue: 21
         }
     };
     const history = createMemoryHistory({
@@ -83,13 +82,13 @@ export const render = (event, context, callback) => {
                 </StaticReduxRouter>
             </Provider>
         ),
-        title: 'Hello world!',
+        title: 'No-Dice | asdsgn.net',
         stylesheets: [
             'https://cdn.rawgit.com/tonsky/FiraCode/1.205/distr/fira_code.css',
-            'https://s3-us-west-2.amazonaws.com/asdsgn.net/app.css'
+            'https://s3-us-west-2.amazonaws.com/no-dice.asdsgn.net/app.css'
         ],
         scripts: [
-            'https://s3-us-west-2.amazonaws.com/asdsgn.net/client.js'
+            'https://s3-us-west-2.amazonaws.com/no-dice.asdsgn.net/client.js'
         ]
     };
     response.body = ct(data);

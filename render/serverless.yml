@@ -11,11 +11,11 @@
 #
 # Happy Coding!
 
-service: asdsgn-net-site
+service: asdsgn-net-no-dice
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
-frameworkVersion: "<=1.26.1"
+frameworkVersion: "<=1.30.1"
 
 provider:
   name: aws
@@ -47,7 +47,6 @@ provider:
 
 plugins:
   - serverless-webpack
-  - serverless-s3-deploy
 
 # you can add packaging information here
 #package:
@@ -111,15 +110,15 @@ functions:
 #       Description: "Description for the output"
 #       Value: "Some output value"
 
-custom:
-  assets:
-    targets:
-      - bucket: asdsgn.net
-        files:
-          - source: ../client/.webpack/
-            globs: 
-              - '**/*.js'
-              - '**/*.css'
+# custom:
+#   assets:
+#     targets:
+#       - bucket: asdsgn.net
+#         files:
+#           - source: ../client/.webpack/
+#             globs: 
+#               - '**/*.js'
+#               - '**/*.css'
 
 #       - S3 Buckets here...
 #       - bucket: my-bucket

@@ -13,7 +13,8 @@ const routes = [
             },
             {
                 path: '*',
-                component: NotFound
+                component: Home
+                // component: NotFound
             }
         ]
     }

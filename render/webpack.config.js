@@ -4,9 +4,17 @@ const slsw = require('serverless-webpack');
 const config = {
   target: 'node',
   entry:  slsw.lib.entries,
+  mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
+  optimization: {
+    minimize: false,
+  },
+  performance: {
+    hints: false,
+  },
   output: {
     path: path.resolve(__dirname, '.webpack'),
     filename: '[name].js',
+    sourceMapFilename: '[file].map',
     libraryTarget: 'commonjs'
   },
   module: {
@@ -33,7 +41,7 @@ const config = {
   externals: [
     'aws-sdk'
   ],
-  devtool: 'eval-source-map'
+  devtool: 'source-map'
 };
 
 module.exports = config;

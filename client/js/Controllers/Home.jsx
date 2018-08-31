@@ -1,12 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 import Dice from '../Components/Dice';
+import { actions } from '../reducers';
 
 class Home extends React.Component {
 
     constructor(props) {
         super(props);
-        this.handleChangeNumberOfDice = this.handleChangeNumberOfDice.bind(this);
+
         this.handleDiceRoll = this.handleDiceRoll.bind(this);
         this.handleLockDice = this.handleLockDice.bind(this);
         this.handleUnlockDice = this.handleUnlockDice.bind(this);
@@ -14,75 +16,65 @@ class Home extends React.Component {
     }
 
     render() {
-        const { activeDice, lockedDice, totalDice, dispatch } = this.props;
+        const { activeDice, lockedDice, totalDice, totalValue, areOptionsOpen } = this.props;
         return (
             <div className="container">
-                <h2>Welcome to No-Dice!</h2>
-                <div>
-                    <p>Let's get playin'!</p>
-                    <input type="number" value={totalDice} onChange={this.handleChangeNumberOfDice} />
-                </div>
-                <hr />
-                <div className="dice-group" onClick={this.handleDiceRoll}>
-                <div className="dice-group__label">active dice</div>
-                    {activeDice.map((d, i) => <Dice value={d} index={i} key={`a${i}`} onClick={this.handleLockDice} dispatch={dispatch} />)}
-                </div>
-                {
-                    lockedDice.length !== 0 && (
-                        <div className="dice-group dice-group--locked">
-                            <div className="dice-group__label">locked dice</div>
-                            {lockedDice.map((d, i) => <Dice value={d} index={i} key={`l${i}`} onClick={this.handleUnlockDice} dispatch={dispatch} />)}
-                            <button onClick={this.handleClearLockedDice}>clear</button>
+                <div className="o-box">Total dice value: {totalValue}</div>
+                <div className="dice-grid">
+                    <div className="o-box dice-group" onClick={this.handleDiceRoll}>
+                        <div className="dice-group__label">active dice</div>
+                        {activeDice.map((d, i) => <Dice value={d} index={i} key={`a${i}`} onClick={this.handleLockDice} />)}
+                        <div className="dice-group__label">
+                            {activeDice.length === 0 ? 'No dice!' : 'Tap here to roll'}
                         </div>
-                    )
-                }
+                    </div>
+                    <div className="dice-group dice-group--locked">
+                        <div className="dice-group__label">locked dice</div>
+                        {
+                            lockedDice.length !== 0
+                                && lockedDice.map((d, i) => <Dice value={d} index={i} key={`l${i}`} onClick={this.handleUnlockDice} />)
+                        }
+                        {
+                            lockedDice.length
+                                ? (
+                                    <button onClick={this.handleClearLockedDice}>clear</button>
+                                )
+                                : (
+                                    <div className="dice-group__label">
+                                        No locked dice (tap active dice to lock them)
+                                    </div>
+                                )
+                        }
+                    </div>
+                </div>
             </div>
         );
     }
 
-    handleChangeNumberOfDice(e) {
-        e.persist();
-        this.props.dispatch({
-            type: 'CHANGE_NUMBER_OF_DICE',
-            value: e.target.value
-        });
-    }
-
     handleDiceRoll(e) {
-        if (e.target.classList.contains('dice-group')) {
-            const { activeDice, dispatch } = this.props;
-            const value = [];
-            activeDice.forEach(() => {
-                value.push(this.getRandomInt(1, 6));
-            });
-            dispatch({
-                type: 'ROLL_DICE',
-                value
-            });
+        if (!e.target.classList.contains('dice')) {
+            const { activeDice } = this.props;
+            const numberOfRollingDice = activeDice.length;
+            for (let i = 0; i < 5; i++) {
+                const value = [];
+                for (let j = 0; j < numberOfRollingDice; j++) {
+                    value.push(this.getRandomInt(1, 6));
+                }
+                setTimeout(() => this.props.rollDice(value), i * 100);
+            }
         }
     }
 
     handleLockDice(value) {
-        const {dispatch} = this.props;
-        dispatch({
-            type: 'LOCK_DICE',
-            value
-        });
+        this.props.lockDice(value);
     }
 
     handleUnlockDice(value) {
-        const {dispatch} = this.props;
-        dispatch({
-            type: 'UNLOCK_DICE',
-            value
-        });
+        this.props.unlockDice(value);
     }
 
     handleClearLockedDice() {
-        const {dispatch} = this.props;
-        dispatch({
-            type: 'CLEAR_LOCKED'
-        });
+        this.props.clearLocked();
     }
 
     /**
@@ -106,9 +98,12 @@ Home.defaultProps = {
 export default connect(
     (state, ownProps) => {
         return Object.assign({
-            activeDice: state.app.activeDice,
-            lockedDice: state.app.lockedDice,
-            totalDice: state.app.activeDice.length + state.app.lockedDice.length
+            activeDice: state.dice.activeDice,
+            lockedDice: state.dice.lockedDice,
+            totalDice: state.dice.activeDice.length + state.dice.lockedDice.length,
+            totalValue: state.dice.totalValue,
+            areOptionsOpen: state.app.areOptionsOpen
         }, ownProps);
-    }
-)(Home)
+    },
+    Object.assign({}, actions.appActions, actions.diceActions)
+)(Home);

@@ -6,15 +6,18 @@ import {routerReducer, routerMiddleware} from 'react-router-redux';
 // import axios from 'axios';
 import thunk from 'redux-thunk';
 
-import {default as appReducer, actions as appActions} from './Controllers/app-reducer.js';
+import {default as appReducer, actions as appActions} from './Controllers/app-reducer';
+import {default as diceReducer, actions as diceActions} from './Controllers/dice-reducer';
 
 const reducers = combineReducers({
     app: appReducer,
+    dice: diceReducer,
     router: routerReducer
 });
 
 const actions = {
-    appActions
+    appActions,
+    diceActions
 };
 /*
 const client = axios.create({
@@ -47,5 +50,6 @@ const createStore = (preloadedState = reducers(), history = browserHistory) => {
 
 export {
     createStore,
-    actions
+    actions,
+    reducers
 };

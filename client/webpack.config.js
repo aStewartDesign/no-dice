@@ -16,7 +16,7 @@ const config = {
     rules: [
       { test: /\.jsx?$/, exclude: /node_modules/, use: 'babel-loader' },
       {
-        test: /\.css$/,
+        test: /\.(s)?css$/,
         use: extractStyles.extract({
           use: [
             {
@@ -24,6 +24,7 @@ const config = {
               options: { importLoaders: 1 },
             },
             'postcss-loader',
+            'sass-loader'
           ],
         }),
       },
