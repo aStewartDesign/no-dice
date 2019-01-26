@@ -16,10 +16,11 @@ class Home extends React.Component {
     }
 
     render() {
-        const { activeDice, lockedDice, totalDice, totalValue, areOptionsOpen } = this.props;
+        const { activeDice, lockedDice, totalDice, totalValue, areOptionsOpen, farkleRollScore, farkleLockedScore } = this.props;
         return (
             <div className="container">
                 <div className="o-box">Total dice value: {totalValue}</div>
+                <div className="o-box">Farkle roll score: {farkleRollScore} {farkleRollScore === 0 ? 'Farkle!' : ''}</div>
                 <div className="dice-grid">
                     <div className="o-box dice-group" onClick={this.handleDiceRoll}>
                         <div className="dice-group__label">active dice</div>
@@ -30,6 +31,7 @@ class Home extends React.Component {
                     </div>
                     <div className="dice-group dice-group--locked">
                         <div className="dice-group__label">locked dice</div>
+                        <div className="o-box">Farkle score: {farkleRollScore > 0 ? farkleLockedScore : 0}</div>
                         {
                             lockedDice.length !== 0
                                 && lockedDice.map((d, i) => <Dice value={d} index={i} key={`l${i}`} onClick={this.handleUnlockDice} />)
@@ -58,7 +60,7 @@ class Home extends React.Component {
             for (let i = 0; i < 5; i++) {
                 const value = [];
                 for (let j = 0; j < numberOfRollingDice; j++) {
-                    value.push(this.getRandomInt(1, 6));
+                    value.push(this.getRandomInt(1, 7));
                 }
                 setTimeout(() => this.props.rollDice(value), i * 100);
             }
@@ -102,7 +104,9 @@ export default connect(
             lockedDice: state.dice.lockedDice,
             totalDice: state.dice.activeDice.length + state.dice.lockedDice.length,
             totalValue: state.dice.totalValue,
-            areOptionsOpen: state.app.areOptionsOpen
+            areOptionsOpen: state.app.areOptionsOpen,
+            farkleRollScore: state.dice.farkleRollScore,
+            farkleLockedScore: state.dice.farkleLockedScore
         }, ownProps);
     },
     Object.assign({}, actions.appActions, actions.diceActions)
