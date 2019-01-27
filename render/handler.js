@@ -55,16 +55,7 @@ export const render = (event, context, callback) => {
         }
     };
     const ct = hb.compile(index);
-    const state = {
-        app: {
-            areOptionsOpen: false
-        },
-        dice: {
-            activeDice: [1, 2, 3, 4, 5, 6],
-            lockedDice: [],
-            totalValue: 21
-        }
-    };
+    const state = reducers();
     const history = createMemoryHistory({
         initialEntries: [parsePath(event.path)],
         initialIndex: 0
