@@ -8,16 +8,19 @@ import thunk from 'redux-thunk';
 
 import {default as appReducer, actions as appActions} from './Controllers/app-reducer';
 import {default as diceReducer, actions as diceActions} from './Controllers/dice-reducer';
+import {default as farkleReducer, actions as farkleActions} from './Controllers/farkle-reducer';
 
 const reducers = combineReducers({
     app: appReducer,
     dice: diceReducer,
+    farkle: farkleReducer,
     router: routerReducer
 });
 
 const actions = {
     appActions,
-    diceActions
+    diceActions,
+    farkleActions
 };
 /*
 const client = axios.create({

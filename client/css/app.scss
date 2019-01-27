@@ -11,6 +11,10 @@ html {
     @include interpolate(font-size, 320px, 1366px, 14px, 20px);
 }
 
+strong {
+    font-weight: bold;
+}
+
 p {margin-bottom: 1.3em;}
 
 h1, h2, h3, h4, h5 {
@@ -78,7 +82,15 @@ a:focus {
     margin: 0 auto;
 }
 
-.form-field {}
+.form-field {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-column-gap: 1em;
+}
+
+    .form-field__label {
+        text-align: right;
+    }
 
     .form-field__input {
         margin-bottom: 0;
@@ -105,7 +117,6 @@ a:focus {
         z-index: 0;
         background: #111;
         color: #ccc;
-        padding: 2em;
     }
 
     .c-app__main {
@@ -118,6 +129,14 @@ a:focus {
         z-index: 1;
         background: #fff;
         transition: left 0.2s;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .c-app__content {
+        flex: 1 1;
+        margin: 0;
+        position: relative;
     }
 
     .c-app--sidebar-open {
@@ -125,6 +144,35 @@ a:focus {
         & > .c-app__main {
             left: 70vw;
         }
+    }
+
+.c-sidebar {
+    box-sizing: border-box;
+    padding: 2em;
+}
+
+.c-header {
+    padding: 1em 2em 0;
+}
+
+    .c-header__menu-button {
+        width: 2em;
+        height: 2em;
+        border-radius: 50%;
+        font-size: 1em;
+        border: 1px solid #999;
+        text-align: center;
+        line-height: 1.5em;
+        vertical-align: middle;
+        color: #555;
+        margin-right: 0.75em;
+    }
+
+    .c-header__title {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        font-weight: bold;
     }
 
 .dice {
@@ -135,6 +183,12 @@ a:focus {
 .dice-grid {
     display: grid;
     grid-template-rows: 3fr 1fr;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 2em;
 }
 
 .dice-group {
@@ -147,6 +201,13 @@ a:focus {
 
     .dice-group__label {
         margin-bottom: 2rem;
+        user-select: none;
+    }
+
+    .dice-group__sub-label {
+        color: #666;
+        margin-left: 0.5em;
+        font-size: 0.75em;
     }
 
 .dice-group--locked {

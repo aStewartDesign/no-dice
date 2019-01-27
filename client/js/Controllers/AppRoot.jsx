@@ -35,7 +35,7 @@ class AppRoot extends React.Component {
                         handleToggleOptions={this.handleToggleOptions}
                         areOptionsOpen={areOptionsOpen}
                         />
-                    <main>
+                    <main className="c-app__content">
                         {renderRoutes(this.props.route.routes)}
                     </main>
                 </div>

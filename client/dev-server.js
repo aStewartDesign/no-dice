@@ -4,10 +4,13 @@ process.chdir(__dirname);
 const hb = require('handlebars');
 const fs = require('fs');
 const index = fs.readFileSync('./index.hbs', {encoding: 'utf8'});
-const express = require('express');
-const app = express();
+const wp = require('webpack');
+const wpConfig = require('./webpack.config');
+const bs = require('browser-sync').create();
+// const express = require('express');
+// const app = express();
 
-app.use(express.static('./public'));
+// app.use(express.static('./public'));
 
 const ct = hb.compile(index);
 const state = {
@@ -18,6 +21,7 @@ const data = {
     data: JSON.stringify(state),
     content: '',
     title: 'Hello world!',
+    isBrowserSyncOn: true,
     stylesheets: [
         'https://cdn.rawgit.com/tonsky/FiraCode/1.205/distr/fira_code.css',
         './app.css'
@@ -28,5 +32,21 @@ const data = {
 };
 fs.writeFileSync('./public/index.html', ct(data), {encoding: 'utf8'});
 
-app.listen(8080, () => console.log('Example app listening on port 8080!'));
+const compiler = wp(wpConfig);
+console.log('Webpack starting...');
+compiler.watch({
+    aggregateTimeout: 500,
+    poll: 500
+}, (err, stats) => {
+    // Print watch/build result here...
+    console.log('Webpack built! Watching...');
+    bs.reload();
+});
+
+console.log('Initializing bs!');
+bs.init({server: './public'}, () => {
+    console.log('browser-sync init!');
+});
+
+// app.listen(8080, () => console.log('Example app listening on port 8080!'));
 
