@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import Anime from 'react-anime';
 import Dice from '../Components/Dice';
+import Timer from '../Components/Timer';
 import { actions } from '../reducers';
 
 class Home extends React.Component {
@@ -9,26 +11,30 @@ class Home extends React.Component {
     constructor(props) {
         super(props);
 
-        this.handleDiceRoll = this.handleDiceRoll.bind(this);
-        this.handleDiceTap = this.handleDiceTap.bind(this);
-        this.handleLockDice = this.handleLockDice.bind(this);
-        this.handleUnlockDice = this.handleUnlockDice.bind(this);
-        this.scoreLockedDice = this.scoreLockedDice.bind(this);
-        this.handleClearLockedDice = this.handleClearLockedDice.bind(this);
         this.tapsTimeoutId = null;
+
+        this.state = {
+            timerAngle: 0
+        };
     }
 
     render() {
         const { activeDice, lockedDice, totalDice, totalValue, areOptionsOpen, farkleRollScore,
-            farkleLockedScore, numberOfRolls, farkleTurnScore
+            farkleSavedScoreThisRoll, numberOfRolls, farkleTurnScore, isFirstRoll, rollCountDown
         } = this.props;
         return (
             <div className="dice-grid">
                 <div className="o-box dice-group" onClick={this.handleDiceTap}>
                     <div className="dice-group__label">
                         active dice
-                        <span className="dice-group__sub-label"><strong>total dice value:</strong> {totalValue} |</span>
-                        <span className="dice-group__sub-label"><strong>farkle roll score:</strong> {farkleRollScore} {farkleRollScore === 0 ? 'Farkle!' : ''}</span>
+                        {
+                            !isFirstRoll && (
+                                <span>
+                                    <span className="dice-group__sub-label"><strong>total dice value:</strong> {totalValue} |</span>
+                                    <span className="dice-group__sub-label"><strong>farkle roll score:</strong> {farkleRollScore} {farkleRollScore === 0 ? 'Farkle!' : ''}</span>
+                                </span>
+                            )
+                        }
                     </div>
                     {activeDice.map((d, i) => <Dice value={d.value} index={i} key={d.key} onClick={this.handleLockDice} />)}
                     <div className="dice-group__label">
@@ -36,7 +42,21 @@ class Home extends React.Component {
                             activeDice.length === 0
                                 ? 'no dice!'
                                 : numberOfRolls > 0
-                                    ? `rolling ${numberOfRolls}x...`
+                                    ? (
+                                        <span>
+                                            rolling {numberOfRolls}x in&nbsp;
+                                            <span classNames={classnames(['u-bold'], {'u-gray': rollCountDown !== 3})}>3</span>&nbsp;
+                                            <span classNames={classnames(['u-bold'], {'u-gray': rollCountDown !== 2})}>2</span>&nbsp;
+                                            <span classNames={classnames(['u-bold'], {'u-gray': rollCountDown !== 1})}>1</span>
+                                            {
+                                                rollCountDown > 0
+                                                    ? '...'
+                                                    : (
+                                                        <span classNames="u-bold">&nbsp;ROLL!</span>
+                                                    )
+                                            }
+                                        </span>
+                                    )
                                     : 'tap here to roll'
                         }
                     </div>
@@ -44,7 +64,7 @@ class Home extends React.Component {
                 <div className="dice-group dice-group--locked">
                     <div className="dice-group__label">
                         locked dice
-                        <span className="dice-group__sub-label"><strong>farkle saved score:</strong> {farkleLockedScore}</span>
+                        <span className="dice-group__sub-label"><strong>farkle saved score:</strong> {farkleSavedScoreThisRoll}</span>
                         <span className="dice-group__sub-label"><strong>farkle turn score:</strong> {farkleTurnScore}</span>
                     </div>
                     {
@@ -67,25 +87,39 @@ class Home extends React.Component {
         );
     }
 
-    handleDiceTap(e) {
+    handleDiceTap = (e) => {
         if (!e.target.classList.contains('dice')) {
-            const {numberOfRolls, countRoll} = this.props;
+            const {numberOfRolls, countRoll, startCountDown} = this.props;
             if (numberOfRolls < 10) {
                 countRoll();
-                if (this.tapsTimeoutId) {
-                    window.clearTimeout(this.tapsTimeoutId);
-                }
-                this.tapsTimeoutId = window.setTimeout(this.handleDiceRoll, 1500);
+                this.handleCancelRoll();
+                startCountDown();
+                this.tapsTimeoutId = window.setInterval(this.handleCountDown, 800);
             }
         }
     }
 
-    handleDiceRoll() {
-        const { activeDice, numberOfRolls, farkleLockedScore, setTurnScore, setSavedScore } = this.props;
+    handleCountDown = () => {
+        const {decrementCountDown, rollCountDown} = this.props;
+        if (rollCountDown > 0) {
+            decrementCountDown();
+        }
+        else {
+            this.handleDiceRoll();
+        }
+    }
+
+    handleCancelRoll = () => {
+        if (this.tapsTimeoutId) {
+            window.clearTimeout(this.tapsTimeoutId);
+        }
+    }
+
+    handleDiceRoll = () => {
+        const { activeDice, numberOfRolls, farkleSavedScoreThisRoll, setTurnScore, farkleTurnScore } = this.props;
         const numberOfRollingDice = activeDice.length;
-        if (farkleLockedScore) {
-            setTurnScore(farkleLockedScore);
-            setSavedScore([]);
+        if (farkleSavedScoreThisRoll) {
+            setTurnScore(farkleSavedScoreThisRoll + farkleTurnScore);
         }
         for (let i = 0; i < numberOfRolls; i++) {
             const value = [];
@@ -104,26 +138,19 @@ class Home extends React.Component {
         }
     }
 
-    handleLockDice(index) {
-        const {lockDice} = this.props;
+    handleLockDice = (index) => {
+        const {lockDice, activeDice, setSavedScore} = this.props;
         lockDice(index);
-        this.scoreLockedDice(index);
+        setSavedScore(activeDice[index].value);
     }
 
-    handleUnlockDice(index) {
-        const {unlockDice} = this.props;
+    handleUnlockDice = (index) => {
+        const {unlockDice, unsetSavedScore} = this.props;
         unlockDice(index);
-        this.scoreLockedDice(index);
+        unsetSavedScore(index);
     }
 
-    scoreLockedDice(index) {
-        const {lockedDice, activeDice, setSavedScore} = this.props;
-        const scoreDice = lockedDice.map((d) => d.value);
-        scoreDice.push(activeDice[index].value);
-        setSavedScore(scoreDice);
-    }
-
-    handleClearLockedDice() {
+    handleClearLockedDice = () => {
         this.props.clearLocked();
     }
 
@@ -154,9 +181,11 @@ export default connect(
             totalValue: state.dice.totalValue,
             areOptionsOpen: state.app.areOptionsOpen,
             farkleRollScore: state.farkle.rollScore,
-            farkleLockedScore: state.farkle.savedScore,
+            farkleSavedScoreThisRoll: state.farkle.savedScoreThisRoll,
             farkleTurnScore: state.farkle.turnScore,
-            numberOfRolls: state.dice.numberOfRolls
+            numberOfRolls: state.dice.numberOfRolls,
+            isFirstRoll: state.farkle.isFirstRoll,
+            rollCountDown: state.dice.countDown
         }, ownProps);
     },
     Object.assign({}, actions.appActions, actions.diceActions, actions.farkleActions)

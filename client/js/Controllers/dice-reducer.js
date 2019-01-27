@@ -28,7 +28,8 @@ const initialState = {
   ],
   lockedDice: [],
   totalValue: 21,
-  numberOfRolls: 0
+  numberOfRolls: 0,
+  countDown: 3
 };
 
 export default function reducer(state = initialState, action = {type: null}) {
@@ -100,6 +101,11 @@ export default function reducer(state = initialState, action = {type: null}) {
     case 'COUNT_ROLL':
       return Object.assign({}, state, {numberOfRolls: state.numberOfRolls + 1});
 
+    case 'START_COUNT_DOWN':
+      return Object.assign({}, state, {countDown: 3});
+
+    case 'COUNT_DOWN':
+      return Object.assign({}, state, {countDown: state.countDown - 1});
 
     default:
       return state;
@@ -140,5 +146,15 @@ export const actions = {
     return {
       type: 'CLEAR_LOCKED'
     };
+  },
+  startCountDown() {
+    return {
+      type: 'START_COUNT_DOWN'
+    }
+  },
+  decrementCountDown() {
+    return {
+      type: 'COUNT_DOWN'
+    }
   }
 };

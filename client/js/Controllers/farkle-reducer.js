@@ -1,12 +1,14 @@
 const initialState = {
     rollScore: 0,
-    savedScore: 0,
+    savedScoreThisRoll: 0,
+    savedDiceThisRoll: [],
     turnScore: 0,
     isFirstRoll: true
 };
 
 export default function reducer(state = initialState, action = {type: null}) {
     const { value } = action;
+    let savedDiceThisRoll;
 
     switch (action.type) {
 
@@ -16,12 +18,25 @@ export default function reducer(state = initialState, action = {type: null}) {
         case 'SET_ROLL_SCORE':
             return Object.assign({}, state, {
                 rollScore: scoreFarkleRoll(value),
+                savedScoreThisRoll: 0,
+                savedDiceThisRoll: [],
                 isFirstRoll: false
             });
 
         case 'SET_SAVED_SCORE':
+            savedDiceThisRoll = state.savedDiceThisRoll.slice();
+            savedDiceThisRoll.push(value);
             return Object.assign({}, state, {
-                savedScore: scoreFarkleRoll(value)
+                savedScoreThisRoll: scoreFarkleRoll(savedDiceThisRoll),
+                savedDiceThisRoll
+            });
+
+        case 'UNSET_SAVED_SCORE':
+            savedDiceThisRoll = state.savedDiceThisRoll.slice();
+            savedDiceThisRoll.splice(action.value, 1);
+            return Object.assign({}, state, {
+                savedScoreThisRoll: scoreFarkleRoll(savedDiceThisRoll),
+                savedDiceThisRoll
             });
 
         case 'SET_TURN_SCORE':
@@ -49,10 +64,16 @@ export const actions = {
             value: dice
         };
     },
-    setSavedScore(dice = []) {
+    setSavedScore(value) {
         return {
             type: 'SET_SAVED_SCORE',
-            value: dice
+            value
+        };
+    },
+    unsetSavedScore(index) {
+        return {
+            type: 'UNSET_SAVED_SCORE',
+            value: index
         };
     },
     setTurnScore(score = 0) {

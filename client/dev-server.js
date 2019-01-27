@@ -38,8 +38,13 @@ compiler.watch({
     aggregateTimeout: 500,
     poll: 500
 }, (err, stats) => {
+    if (err) {
+        console.error(err);
+        return;
+    }
     // Print watch/build result here...
     console.log('Webpack built! Watching...');
+    console.log(stats.toString({chunks: false, colors: true}));
     bs.reload();
 });
 

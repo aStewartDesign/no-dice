@@ -9,7 +9,7 @@
     "start": "node ./client/dev-server.js",
     "dev": "node ./client/dev-server.js",
     "deploy": "npm run deploy-client && npm run deploy-render",
-    "deploy-client": "npm run build && aws s3 cp --recursive ./client/public s3://no-dice.asdsgn.net",
+    "deploy-client": "npm run build && aws s3 sync ./client/public s3://no-dice.asdsgn.net",
     "deploy-render": "cd render && sls deploy && cd .."
   },
   "repository": {
@@ -29,6 +29,7 @@
     "moment": "^2.21.0",
     "prop-types": "^15.6.1",
     "react": "^16.2.0",
+    "react-anime": "^2.2.0",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.7",
     "react-router-config": "^1.0.0-beta.4",
