@@ -12,10 +12,6 @@ class Home extends React.Component {
         super(props);
 
         this.tapsTimeoutId = null;
-
-        this.state = {
-            timerAngle: 0
-        };
     }
 
     render() {
@@ -44,15 +40,16 @@ class Home extends React.Component {
                                 : numberOfRolls > 0
                                     ? (
                                         <span>
-                                            rolling {numberOfRolls}x in&nbsp;
-                                            <span classNames={classnames(['u-bold'], {'u-gray': rollCountDown !== 3})}>3</span>&nbsp;
-                                            <span classNames={classnames(['u-bold'], {'u-gray': rollCountDown !== 2})}>2</span>&nbsp;
-                                            <span classNames={classnames(['u-bold'], {'u-gray': rollCountDown !== 1})}>1</span>
+                                            {/*
+                                            <span classNames={classnames({'u-bold': rollCountDown === 3, 'u-gray': rollCountDown !== 3})}>3</span>&nbsp;
+                                            <span classNames={classnames({'u-bold': rollCountDown === 2, 'u-gray': rollCountDown !== 2})}>2</span>&nbsp;
+                                            <span classNames={classnames({'u-bold': rollCountDown === 1, 'u-gray': rollCountDown !== 1})}>1</span>
+                                            */}
                                             {
                                                 rollCountDown > 0
-                                                    ? '...'
+                                                    ? `rolling ${numberOfRolls}x in ${rollCountDown}...`
                                                     : (
-                                                        <span classNames="u-bold">&nbsp;ROLL!</span>
+                                                        <span classNames="u-bold">ROLL!</span>
                                                     )
                                             }
                                         </span>
@@ -88,7 +85,7 @@ class Home extends React.Component {
     }
 
     handleDiceTap = (e) => {
-        if (!e.target.classList.contains('dice')) {
+        if (!e.target.classList.contains('dice') || !e.target.classList.contains('cancel')) {
             const {numberOfRolls, countRoll, startCountDown} = this.props;
             if (numberOfRolls < 10) {
                 countRoll();

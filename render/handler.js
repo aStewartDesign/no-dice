@@ -1,3 +1,4 @@
+import '@babel/polyfill';
 import hb from 'handlebars';
 import React from 'react';
 import PropTypes from 'prop-types';

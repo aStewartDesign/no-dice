@@ -19,7 +19,27 @@ const config = {
   },
   module: {
     rules: [
-      { test: /\.jsx?$/, exclude: /node_modules/, use: 'babel-loader' },
+      {
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            "presets": [
+              [
+                  "@babel/preset-env",
+                  {
+                      "useBuiltIns": "entry",
+                  }
+              ],
+              "@babel/preset-react"
+          ],
+          "plugins": [
+              ["@babel/plugin-proposal-class-properties", { "loose": false }]
+          ]
+          }
+        }
+      },
       { test: /\.hbs/, use: 'html-loader' },
       {
         test: /\.(gif|png|jpe?g|svg)$/i,
