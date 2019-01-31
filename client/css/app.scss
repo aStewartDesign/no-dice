@@ -217,7 +217,8 @@ a:focus {
         left: 0;
         right: 0;
         display: flex;
-        justify-content: flex-end;
+        text-align: center;
+        flex-direction: column;
         padding: 1rem 2rem;
         user-select: none;
     }
@@ -229,6 +230,16 @@ a:focus {
 .dice-group--locked {
     background: transparent;
     color: rgba(0,0,0, 0.5);
+}
+
+@media screen and (min-width: 1000px) {
+
+    .dice-group__footer {
+        text-align: left;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: baseline;
+    }
 }
 
 

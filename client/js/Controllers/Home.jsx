@@ -34,8 +34,11 @@ class Home extends React.Component {
                 }
             };
         }
+        else if (farkleSavedScoreThisRoll === 0 && farkleTurnScore === 0) {
+            turnActions.action = 'Tap dice to lock them and take points.'
+        }
         else {
-            turnActions.action = 'you could definitely roll again. or you could',
+            turnActions.action = 'you could roll again. or you could...',
             turnActions.primary = {
                 text: `take ${farkleTurnScore + farkleSavedScoreThisRoll} points and end your turn`,
                 handleClick: () => {
