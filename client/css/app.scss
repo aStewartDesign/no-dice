@@ -197,6 +197,7 @@ a:focus {
     background: rgba(0,0,0, 0.1);
     border-radius: 3px;
     overflow: auto;
+    position: relative;
 }
 
     .dice-group__label {
@@ -209,6 +210,21 @@ a:focus {
         margin-left: 0.5em;
         font-size: 0.75em;
     }
+
+    .dice-group__footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: flex-end;
+        padding: 1rem 2rem;
+        user-select: none;
+    }
+
+        .dice-group__footer button {
+            margin-left: 0.75em;
+        }
 
 .dice-group--locked {
     background: transparent;

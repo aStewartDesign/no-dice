@@ -9,6 +9,7 @@ const initialState = {
 export default function reducer(state = initialState, action = {type: null}) {
     const { value } = action;
     let savedDiceThisRoll;
+    let savedScoreThisRoll;
 
     switch (action.type) {
 
@@ -26,8 +27,9 @@ export default function reducer(state = initialState, action = {type: null}) {
         case 'SET_SAVED_SCORE':
             savedDiceThisRoll = state.savedDiceThisRoll.slice();
             savedDiceThisRoll.push(value);
+            savedScoreThisRoll = scoreFarkleRoll(savedDiceThisRoll);
             return Object.assign({}, state, {
-                savedScoreThisRoll: scoreFarkleRoll(savedDiceThisRoll),
+                savedScoreThisRoll,
                 savedDiceThisRoll
             });
 

@@ -101,6 +101,9 @@ export default function reducer(state = initialState, action = {type: null}) {
     case 'COUNT_ROLL':
       return Object.assign({}, state, {numberOfRolls: state.numberOfRolls + 1});
 
+    case 'RESET_ROLL':
+      return Object.assign({}, state, { numberOfRolls: 0 });
+
     case 'START_COUNT_DOWN':
       return Object.assign({}, state, {countDown: 3});
 
@@ -122,6 +125,11 @@ export const actions = {
   countRoll() {
     return {
       type: 'COUNT_ROLL'
+    }
+  },
+  resetRoll() {
+    return {
+      type: 'RESET_ROLL'
     }
   },
   rollDice(value) {

@@ -16,11 +16,37 @@ class Home extends React.Component {
 
     render() {
         const { activeDice, lockedDice, totalDice, totalValue, areOptionsOpen, farkleRollScore,
-            farkleSavedScoreThisRoll, numberOfRolls, farkleTurnScore, isFirstRoll, rollCountDown
+            farkleSavedScoreThisRoll, numberOfRolls, farkleTurnScore, isFirstRoll, rollCountDown,
+            resetTurn, clearLocked
         } = this.props;
+
+        const turnActions = {};
+        if (isFirstRoll) {
+            turnActions.action = 'Go ahead, roll the dice!';
+        }
+        else if (farkleRollScore === 0) {
+            turnActions.action = 'you farkled! no points this turn.'
+            turnActions.primary = {
+                text: 'next turn',
+                handleClick: () => {
+                    resetTurn();
+                    clearLocked();
+                }
+            };
+        }
+        else {
+            turnActions.action = 'you could definitely roll again. or you could',
+            turnActions.primary = {
+                text: `take ${farkleTurnScore + farkleSavedScoreThisRoll} points and end your turn`,
+                handleClick: () => {
+                    resetTurn();
+                    clearLocked();
+                }
+            };
+        }
         return (
             <div className="dice-grid">
-                <div className="o-box dice-group" onClick={this.handleDiceTap}>
+                <div className="o-box dice-group js-is-tap-pad" onClick={this.handleDiceTap}>
                     <div className="dice-group__label">
                         active dice
                         {
@@ -33,7 +59,7 @@ class Home extends React.Component {
                         }
                     </div>
                     {activeDice.map((d, i) => <Dice value={d.value} index={i} key={d.key} onClick={this.handleLockDice} />)}
-                    <div className="dice-group__label">
+                    <div className="dice-group__label js-is-tap-pad">
                         {
                             activeDice.length === 0
                                 ? 'no dice!'
@@ -52,17 +78,39 @@ class Home extends React.Component {
                                                         <span classNames="u-bold">ROLL!</span>
                                                     )
                                             }
+                                            <button onClick={this.handleCancelRoll}>[x] cancel roll</button>
                                         </span>
                                     )
                                     : 'tap here to roll'
                         }
                     </div>
+                    {
+                        turnActions && (
+                            <div className="dice-group__footer">
+                                <span>{ turnActions.action }</span>
+                                {
+                                    turnActions.primary && (
+                                        <button className="button button--primary" onClick={turnActions.primary.handleClick}>
+                                            {turnActions.primary.text}
+                                        </button>
+                                    )
+                                }
+                                {
+                                    turnActions.secondary && (
+                                        <button className="button" onClick={turnActions.secondary.handleClick}>
+                                            {turnActions.secondary.text}
+                                        </button>
+                                    )
+                                }
+                            </div>
+                        )
+                    }
                 </div>
                 <div className="dice-group dice-group--locked">
                     <div className="dice-group__label">
                         locked dice
                         <span className="dice-group__sub-label"><strong>farkle saved score:</strong> {farkleSavedScoreThisRoll}</span>
-                        <span className="dice-group__sub-label"><strong>farkle turn score:</strong> {farkleTurnScore}</span>
+                        <span className="dice-group__sub-label"><strong>farkle turn+ score:</strong> {farkleTurnScore + farkleSavedScoreThisRoll}</span>
                     </div>
                     {
                         lockedDice.length !== 0
@@ -85,11 +133,11 @@ class Home extends React.Component {
     }
 
     handleDiceTap = (e) => {
-        if (!e.target.classList.contains('dice') || !e.target.classList.contains('cancel')) {
+        if (e.target.classList.contains('js-is-tap-pad')) {
             const {numberOfRolls, countRoll, startCountDown} = this.props;
             if (numberOfRolls < 10) {
                 countRoll();
-                this.handleCancelRoll();
+                this.handleClearTimeout();
                 startCountDown();
                 this.tapsTimeoutId = window.setInterval(this.handleCountDown, 800);
             }
@@ -103,13 +151,19 @@ class Home extends React.Component {
         }
         else {
             this.handleDiceRoll();
+            this.handleClearTimeout();
+        }
+    }
+
+    handleClearTimeout = () => {
+        if (this.tapsTimeoutId) {
+            window.clearTimeout(this.tapsTimeoutId);
         }
     }
 
     handleCancelRoll = () => {
-        if (this.tapsTimeoutId) {
-            window.clearTimeout(this.tapsTimeoutId);
-        }
+        this.handleClearTimeout();
+        this.props.resetRoll();
     }
 
     handleDiceRoll = () => {
