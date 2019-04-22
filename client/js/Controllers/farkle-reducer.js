@@ -13,9 +13,6 @@ export default function reducer(state = initialState, action = {type: null}) {
 
     switch (action.type) {
 
-        case 'CLEAR_SCORE':
-            return Object.assign({}, state, initialState);
-
         case 'SET_ROLL_SCORE':
             return Object.assign({}, state, {
                 rollScore: scoreFarkleRoll(value),
@@ -55,11 +52,6 @@ export default function reducer(state = initialState, action = {type: null}) {
 }
 
 export const actions = {
-    clearScore() {
-        return {
-            type: 'CLEAR_SCORE'
-        };
-    },
     setRollScore(dice = []) {
         return {
             type: 'SET_ROLL_SCORE',
@@ -90,9 +82,6 @@ export const actions = {
         }
     }
 };
-
-
-
 
 
 function scoreFarkleRoll(dice = []) {

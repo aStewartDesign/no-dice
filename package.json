@@ -2,7 +2,7 @@
   "name": "no-dice",
   "version": "1.0.0",
   "description": "A better dice app.",
-  "main": "index.js",
+  "main": "client/dev-server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config ./client/webpack.config.js",
